@@ -1,0 +1,62 @@
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "69c28be8066f21cc0c9da464",
+      "studentId": {
+        "_id": "69bfea734d000a991f1c3ee3",
+        "name": "Amit Fulara",
+        "email": "amitfulara07022004@gmail.com",
+        "department": "CSE",
+        "batch": "CSE-2026"
+      },
+      "mentorId": "69c28b75066f21cc0c9da452",
+      "projectId": null,
+      "assignedBy": "69bfeac24d000a991f1c3ee8",
+      "status": "active",
+      "note": "m tera mentor hu",
+      "assignedAt": "2026-03-24T13:04:40.682Z",
+      "createdAt": "2026-03-24T13:04:40.682Z",
+      "updatedAt": "2026-03-24T13:04:40.682Z",
+      "__v": 0
+    },
+    {
+      "_id": "69c28d35066f21cc0c9da49b",
+      "studentId": {
+        "_id": "69bff0154d000a991f1c3ef0",
+        "name": "Amit Fulara",
+        "email": "nikhilrawat@gmail.com",
+        "department": "CSE",
+        "batch": "CSE-2026"
+      },
+      "mentorId": "69c28b75066f21cc0c9da452",
+      "projectId": null,
+      "assignedBy": "69bfeac24d000a991f1c3ee8",
+      "status": "active",
+      "note": "mera bachaa h tu",
+      "assignedAt": "2026-03-24T13:10:13.129Z",
+      "createdAt": "2026-03-24T13:10:13.130Z",
+      "updatedAt": "2026-03-24T13:10:13.130Z",
+      "__v": 0
+    },
+    {
+      "_id": "69c28d67066f21cc0c9da4a6",
+      "studentId": {
+        "_id": "69c021c2800d822d91d39157",
+        "name": "nikhil",
+        "email": "joshi@gmail.com",
+        "department": "CSE",
+        "batch": "CSE-2026"
+      },
+      "mentorId": "69c28b75066f21cc0c9da452",
+      "projectId": null,
+      "assignedBy": "69bfeac24d000a991f1c3ee8",
+      "status": "active",
+      "note": "time se chiye chije",
+      "assignedAt": "2026-03-24T13:11:03.523Z",
+      "createdAt": "2026-03-24T13:11:03.523Z",
+      "updatedAt": "2026-03-24T13:11:03.523Z",
+      "__v": 0
+    }
+  ]
+}

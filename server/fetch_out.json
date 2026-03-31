@@ -1,0 +1,4 @@
+{
+  "status": 500,
+  "data": "{\"message\":\"Schema hasn't been registered for model \\\"Project\\\".\\nUse mongoose.model(name, schema)\"}"
+}
