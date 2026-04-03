@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { format } from 'date-fns';
 import { Users, FileText, CheckCircle, Clock, AlertCircle, MessageSquare } from 'lucide-react';
 import DashboardLayout from '../../components/shared/DashboardLayout';
+import PlagiarismResultCard from '../../components/mentor/PlagiarismResultCard';
 
 const MentorDashboard = () => {
   const [students, setStudents] = useState([]);
@@ -155,7 +156,37 @@ const MentorDashboard = () => {
                         )}
                       </div>
 
-                      <form onSubmit={handleReviewSubmit} className="space-y-6">
+                      {(() => {
+                        const repoUrl = reviewingLog.evidenceLinks?.find(link => link.includes('github.com'));
+                        if (repoUrl) {
+                          return (
+                            <PlagiarismResultCard
+                              logId={reviewingLog._id}
+                              repoUrl={repoUrl}
+                              onFlagLog={(verdict) => {
+                                setFeedbackState({...feedbackState, status: 'revision_requested'});
+                              }}
+                            />
+                          );
+                        } else {
+                          return (
+                            <div style={{
+                              padding: '10px 14px',
+                              background: 'var(--color-background-secondary)',
+                              borderRadius: '8px',
+                              fontSize: '12px',
+                              color: 'var(--color-text-secondary)',
+                              marginTop: '12px',
+                              border: '0.5px solid var(--color-border-tertiary)',
+                              marginBottom: '24px'
+                            }}>
+                              No GitHub repository URL found in this log. Ask the student to include their repo link in evidence links.
+                            </div>
+                          );
+                        }
+                      })()}
+
+                      <form onSubmit={handleReviewSubmit} className="space-y-6 mt-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">Status Action</label>

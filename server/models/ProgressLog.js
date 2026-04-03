@@ -21,6 +21,10 @@ const ProgressLogSchema = new Schema({
   submittedAt:   Date,
   reviewedAt:    Date,
   version:       { type: Number, default: 1 },
+  integrityStatus: {
+    score: { type: String, enum: ['clean', 'suspicious', 'flagged'], default: 'clean' },
+    flags: [{ type: String }],
+  },
 }, { timestamps: true });
 
 // Unique: one log per student per week per project

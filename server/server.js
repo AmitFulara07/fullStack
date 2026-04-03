@@ -38,6 +38,7 @@ app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/badges', require('./routes/badgeRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/projects', require('./routes/projectRoutes'));
+app.use('/api/plagiarism', require('./routes/plagiarismRoutes'));
 
 // Global Error Handler
 app.use((err, req, res, next) => {
