@@ -9,7 +9,8 @@ import {
   LayoutDashboard, 
   Users, 
   BookOpen, 
-  FileText
+  FileText,
+  Award
 } from 'lucide-react';
 
 const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
@@ -31,6 +32,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
     student: [
       { path: '/student', label: 'Dashboard', icon: LayoutDashboard },
       { path: '/student/log/new', label: 'Submit Log', icon: FileText },
+      { path: '/student/badges', label: 'My Badges', icon: Award },
     ]
   };
 

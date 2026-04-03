@@ -4,6 +4,7 @@ import BackgroundBlobs from './BackgroundBlobs';
 import { motion } from 'framer-motion';
 import { Menu } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import NotificationBell from './NotificationBell';
 
 const DashboardLayout = ({ children, title = "Dashboard" }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -42,6 +43,7 @@ const DashboardLayout = ({ children, title = "Dashboard" }) => {
               </span>
               System Online
             </div>
+            <NotificationBell />
           </div>
         </header>
 

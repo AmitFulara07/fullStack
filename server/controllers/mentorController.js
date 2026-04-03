@@ -3,6 +3,9 @@ const ProgressLog = require('../models/ProgressLog');
 const Feedback = require('../models/Feedback');
 const Notification = require('../models/Notification');
 const Project = require('../models/Project');
+const User = require('../models/User');
+const { awardBadge } = require('../services/badgeService');
+const { sendFeedbackEmail } = require('../services/emailService');
 
 exports.getAssignedStudents = async (req, res) => {
   const assignments = await MentorAssignment.find({ mentorId: req.user.id, status: 'active' })
@@ -62,6 +65,17 @@ exports.reviewLog = async (req, res) => {
   });
 
   // (Optional) Call badge service if commend === true here during Phase 5
+  if (commend) {
+    await awardBadge(log.studentId, 'mentor_commend', null, req.user.id, log._id);
+  }
+
+  // Send email notification
+  const student = await User.findById(log.studentId);
+  const mentor = await User.findById(req.user.id);
+  if (student && student.email && mentor) {
+    await sendFeedbackEmail(student.email, student.name, mentor.name, log.weekNumber, status);
+  }
+
   res.status(201).json(feedback);
 };
 

@@ -133,3 +133,50 @@ exports.deleteLog = async (req, res) => {
   await log.deleteOne();
   res.json({ message: 'Log removed' });
 };
+
+exports.getStudentStats = async (req, res) => {
+  const studentId = req.user.id;
+
+  // Total logs (not draft)
+  const totalLogs = await ProgressLog.countDocuments({ studentId, status: { $ne: 'draft' } });
+
+  // Pending feedback
+  const pendingFeedback = await ProgressLog.countDocuments({ studentId, status: 'submitted' });
+
+  // Streak calculation
+  const logs = await ProgressLog.find({ studentId, status: { $ne: 'draft' } })
+    .sort({ weekNumber: -1 });
+
+  let streak = 0;
+  if (logs.length > 0) {
+    streak = 1;
+    for (let i = 0; i < logs.length - 1; i++) {
+      if (logs[i].weekNumber - logs[i+1].weekNumber === 1) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+  }
+
+  res.json({ totalLogs, streak, pendingFeedback });
+};
+
+exports.getMyProject = async (req, res) => {
+  const studentId = req.user.id;
+  const project = await Project.findOne({ studentId, status: 'active' });
+  
+  if (!project) {
+    return res.json({ project: null });
+  }
+
+  res.json({ 
+    project: { 
+      _id: project._id, 
+      title: project.title, 
+      currentPhase: project.currentPhase, 
+      phases: project.phases, 
+      status: project.status 
+    } 
+  });
+};

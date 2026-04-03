@@ -10,6 +10,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import FacultyDashboard from './pages/faculty/FacultyDashboard';
 import StudentDashboard from './pages/student/StudentDashboard';
 import SubmitLog from './pages/student/SubmitLog';
+import MyBadges from './pages/student/MyBadges';
 import MentorDashboard from './pages/mentor/MentorDashboard';
 
 const App = () => {
@@ -35,6 +36,7 @@ const App = () => {
         <Route element={<ProtectedRoute allowedRoles={['student']} />}>
           <Route path="/student" element={<StudentDashboard />} />
           <Route path="/student/log/new" element={<SubmitLog />} />
+          <Route path="/student/badges" element={<MyBadges />} />
         </Route>
 
         {/* Mentor Routes */}

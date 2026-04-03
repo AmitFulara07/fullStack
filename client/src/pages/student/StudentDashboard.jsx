@@ -1,12 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { Link } from 'react-router-dom';
 import ProgressTimeline from '../../components/student/ProgressTimeline';
 import { Flame, PenTool, Award, MessageSquare, CheckCircle } from 'lucide-react';
 import DashboardLayout from '../../components/shared/DashboardLayout';
+import api from '../../api/axiosInstance';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
+  const [stats, setStats] = useState({ streak: 0, totalLogs: 0, pendingFeedback: 0 });
+  const [badgesEarned, setBadgesEarned] = useState(0);
+  const [project, setProject] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const [statsRes, badgesRes, projRes] = await Promise.all([
+          api.get('/logs/stats'),
+          api.get('/badges/my'),
+          api.get('/projects/my')
+        ]);
+        setStats(statsRes.data);
+        const earnedCount = (badgesRes.data || []).filter(b => b.earned).length;
+        setBadgesEarned(earnedCount);
+        setProject(projRes.data.project);
+      } catch (error) {
+        console.error('Failed to fetch dashboard data', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDashboardData();
+  }, []);
 
   return (
     <DashboardLayout title="Student Dashboard">
@@ -30,7 +56,11 @@ const StudentDashboard = () => {
             </div>
             <div>
               <p className="text-sm text-gray-400 font-medium">Streak</p>
-              <p className="text-2xl font-bold text-white">3 wks</p>
+              {loading ? (
+                <div className="h-8 w-16 bg-white/5 animate-pulse rounded mt-1"></div>
+              ) : (
+                <p className="text-2xl font-bold text-white">{stats.streak} {stats.streak === 1 ? 'wk' : 'wks'}</p>
+              )}
             </div>
           </div>
           
@@ -40,7 +70,11 @@ const StudentDashboard = () => {
             </div>
             <div>
               <p className="text-sm text-gray-400 font-medium">Total Logs</p>
-              <p className="text-2xl font-bold text-white">5</p>
+              {loading ? (
+                 <div className="h-8 w-12 bg-white/5 animate-pulse rounded mt-1"></div>
+              ) : (
+                 <p className="text-2xl font-bold text-white">{stats.totalLogs}</p>
+              )}
             </div>
           </div>
 
@@ -50,7 +84,11 @@ const StudentDashboard = () => {
             </div>
             <div>
               <p className="text-sm text-gray-400 font-medium">Badges</p>
-              <p className="text-2xl font-bold text-white">2</p>
+              {loading ? (
+                 <div className="h-8 w-12 bg-white/5 animate-pulse rounded mt-1"></div>
+              ) : (
+                 <p className="text-2xl font-bold text-white">{badgesEarned}</p>
+              )}
             </div>
           </div>
 
@@ -60,7 +98,11 @@ const StudentDashboard = () => {
             </div>
             <div>
               <p className="text-sm text-gray-400 font-medium">Feedback</p>
-              <p className="text-2xl font-bold text-white">1</p>
+              {loading ? (
+                 <div className="h-8 w-12 bg-white/5 animate-pulse rounded mt-1"></div>
+              ) : (
+                 <p className="text-2xl font-bold text-white">{stats.pendingFeedback}</p>
+              )}
             </div>
           </div>
         </div>
@@ -68,27 +110,40 @@ const StudentDashboard = () => {
         {/* Phase Bar */}
         <div className="glass rounded-2xl p-8 border border-white/5 shadow-xl">
           <h3 className="text-sm font-bold text-brand-400 uppercase tracking-widest mb-8">Project Progression</h3>
-          <div className="flex items-center justify-between pt-2">
-            {['Ideation', 'Design', 'Development', 'Testing', 'Final Review'].map((phase, i) => (
-              <div key={phase} className="flex flex-col flex-1 items-center relative group">
-                {/* Connecting Line */}
-                {i !== 0 && (
-                  <div className={`absolute w-[calc(100%-2rem)] h-1 right-[calc(50%+1rem)] top-4 -z-10 rounded-full ${i <= 1 ? 'bg-brand-500' : 'bg-white/10'}`} />
-                )}
-                
-                {/* Node */}
-                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold shadow-lg transition-transform group-hover:scale-110 ${
-                  i <= 1 
-                    ? 'bg-brand-600 text-white border-2 border-brand-400 ring-4 ring-brand-500/20 shadow-[0_0_15px_rgba(37,99,235,0.5)]' 
-                    : 'bg-dark-800 border-2 border-white/20 text-gray-500'
-                }`}>
-                  {i < 1 ? <CheckCircle size={16} /> : i + 1}
-                </div>
-                
-                <span className={`text-xs mt-4 font-semibold tracking-wide ${i <= 1 ? 'text-brand-300' : 'text-gray-500'}`}>{phase}</span>
-              </div>
-            ))}
-          </div>
+          {!project ? (
+            <div className="text-center py-6 text-gray-500">
+              <p>No project assigned yet</p>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between pt-2">
+              {['Ideation', 'Design', 'Development', 'Testing', 'Final Review'].map((phase, i) => {
+                const phaseKeys = ['ideation', 'design', 'development', 'testing', 'final_review'];
+                const activeIdx = project ? phaseKeys.indexOf(project.currentPhase) : -1;
+                const isActive = i <= activeIdx;
+                const isComplete = i < activeIdx;
+
+                return (
+                  <div key={phase} className="flex flex-col flex-1 items-center relative group">
+                    {/* Connecting Line */}
+                    {i !== 0 && (
+                      <div className={`absolute w-[calc(100%-2rem)] h-1 right-[calc(50%+1rem)] top-4 -z-10 rounded-full ${isActive ? 'bg-brand-500' : 'bg-white/10'}`} />
+                    )}
+                    
+                    {/* Node */}
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold shadow-lg transition-transform group-hover:scale-110 ${
+                      isActive 
+                        ? 'bg-brand-600 text-white border-2 border-brand-400 ring-4 ring-brand-500/20 shadow-[0_0_15px_rgba(37,99,235,0.5)]' 
+                        : 'bg-dark-800 border-2 border-white/20 text-gray-500'
+                    }`}>
+                      {isComplete ? <CheckCircle size={16} /> : i + 1}
+                    </div>
+                    
+                    <span className={`text-xs mt-4 font-semibold tracking-wide ${isActive ? 'text-brand-300' : 'text-gray-500'}`}>{phase}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Timeline */}

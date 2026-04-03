@@ -6,7 +6,12 @@ const morgan = require('morgan');
 const connectDB = require('./config/db');
 
 // Connect to MongoDB
-connectDB();
+connectDB().then(() => {
+  const seedBadges = require('./seeders/badgeSeeder');
+  const { initCronJob } = require('./jobs/badgeCronJob');
+  seedBadges();
+  initCronJob();
+});
 
 const app = express();
 
@@ -30,14 +35,13 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/logs', require('./routes/progressLogRoutes'));
 app.use('/api/mentor', require('./routes/mentorRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
-// app.use('/api/badge', require('./routes/badgeRoutes'));
-// app.use('/api/notifications', require('./routes/notificationRoutes'));
-// app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/badges', require('./routes/badgeRoutes'));
+app.use('/api/notifications', require('./routes/notificationRoutes'));
+app.use('/api/projects', require('./routes/projectRoutes'));
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: err.message || 'Server Error' });
+  res.status(500).json({ message: err.message || 'Server Error', stack: err.stack });
 });
 
 const PORT = process.env.PORT || 5000;

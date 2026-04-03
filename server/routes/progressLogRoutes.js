@@ -9,7 +9,8 @@ const {
   updateLog,
   getMyLogs,
   getLogById,
-  deleteLog
+  deleteLog,
+  getStudentStats
 } = require('../controllers/progressLogController');
 const { getFeedbackByLog } = require('../controllers/mentorController');
 
@@ -34,6 +35,13 @@ router.get(
   verifyToken,
   authorizeRole('student'),
   asyncHandler(getMyLogs)
+);
+
+router.get(
+  '/stats',
+  verifyToken,
+  authorizeRole('student'),
+  asyncHandler(getStudentStats)
 );
 
 router.get(
